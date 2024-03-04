@@ -6,7 +6,6 @@ import {
   CSS2DRenderer,
   CSS2DObject,
 } from "three/addons/renderers/CSS2DRenderer.js";
-import { imgDataBase64 } from "@/lib/3d/image.data";
 
 export default function GlobeWithMakers() {
   useEffect(() => {
@@ -100,6 +99,7 @@ export default function GlobeWithMakers() {
     let m = new THREE.PointsMaterial({
       size: 0.1,
       vertexColors: true,
+      //@ts-ignore comment
       onBeforeCompile: (shader: any) => {
         shader.uniforms.globeTexture = {
           value: new THREE.TextureLoader().load("/assets/02_earthspec1k.jpg"),
@@ -159,6 +159,7 @@ export default function GlobeWithMakers() {
     const gMarker = new THREE.PlaneGeometry();
     let mMarker = new THREE.MeshBasicMaterial({
       color: 0xff3232,
+      //@ts-ignore comment
       onBeforeCompile: (shader: any) => {
         shader.uniforms.time = globalUniforms.time;
         shader.vertexShader = `
