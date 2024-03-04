@@ -7,15 +7,16 @@ import {
   CSS2DObject,
 } from "three/addons/renderers/CSS2DRenderer.js";
 
+
 export default function GlobeWithMakers() {
   useEffect(() => {
     const w = window.innerWidth;
     const h = window.innerHeight;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
-    camera.position.z = 5;
+    camera.position.set(0.5, 0.5, 1).setLength(14);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(w, h);
+    renderer.setSize(innerWidth, innerHeight);
     // set the color to be green or make the sky dark
     renderer.setClearColor(0xaaffaa);
 
@@ -32,8 +33,8 @@ export default function GlobeWithMakers() {
     window.addEventListener("resize", onWindowResize);
     const controls = new OrbitControls(camera, labelRender.domElement);
     controls.enablePan = false;
-    controls.minDistance = 1.7;
-    controls.maxDistance = 9;
+    controls.minDistance = 6;
+    controls.maxDistance = 15;
     controls.enableDamping = true;
     controls.autoRotate = true;
     controls.autoRotateSpeed *= 0.25;
