@@ -154,7 +154,7 @@ export default function GlobeWithMakers() {
     );
     globe.add(icshdrn);
     const markerCount = 100;
-    const markerInfo = [];
+    const markerInfo: any = [];
     const gMarker = new THREE.PlaneGeometry();
     let mMarker = new THREE.MeshBasicMaterial({
       color: 0xff3232,
@@ -252,6 +252,7 @@ export default function GlobeWithMakers() {
       pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
       raycaster.setFromCamera(pointer, camera);
       intersections = raycaster.intersectObject(markers).filter((m) => {
+        //@ts-ignore comment
         return m.uv.subScalar(0.5).length() * 2 < 0.25;
       });
 
@@ -259,7 +260,7 @@ export default function GlobeWithMakers() {
         let marker = intersections[0];
         let clickedMarkerId = marker.instanceId;
         let clickedMarkerData = markerInfo.find(
-          (info) => info.id === clickedMarkerId
+          (info: any) => info.id === clickedMarkerId
         );
         if (clickedMarkerData) {
           let i = 0;
@@ -275,7 +276,7 @@ export default function GlobeWithMakers() {
       }
     });
 
-    function displayCardComponent(markerData) {
+    function displayCardComponent(markerData: any) {
       const cardDiv = document.createElement("div");
       cardDiv.id = "cardComponent";
       cardDiv.classList.add("hidden") // set the card to hide first
