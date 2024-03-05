@@ -3,7 +3,7 @@ interface Attribute {
   value: string;
 }
 
-interface PadDataI {
+export interface PadDataI {
   name: string;
   description: string;
   image: string;

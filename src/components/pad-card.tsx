@@ -40,7 +40,7 @@ export default function PadCard({
         }, 1500);
       });
     } else {
-      // Fallback for browsers that do not support clipboard API
+      
       console.error("Clipboard API not supported");
     }
   };
@@ -62,7 +62,7 @@ export default function PadCard({
   }, []);
   return (
     <Draggable>
-      <div className="dna-text w-[320px] h-[590px] rounded-lg bg-gradient-to-br from-[#77C6A7] font-silkscreen to-[#4EA8A3] shadow-lg p-4 relative">
+      <div className="dna-text w-4/5 mx-auto mt-10 lg:w-[320px] lg:h-[590px] rounded-lg bg-gradient-to-br from-[#77C6A7] font-silkscreen to-[#4EA8A3] shadow-lg p-4 relative">
         <h2 className="text-white text-xl font-bold flex font-silkscreen justify-center">
           {name}
         </h2>
