@@ -20,7 +20,7 @@ export default function GlobeWithMakers() {
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(innerWidth, innerHeight);
     // set the color to be green or make the sky dark
-    renderer.setClearColor(0xaaffaa);
+    // renderer.setClearColor(0xaaffaa);
 
     document.body.appendChild(renderer.domElement);
 
