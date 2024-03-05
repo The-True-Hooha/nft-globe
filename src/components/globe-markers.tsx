@@ -276,64 +276,39 @@ export default function GlobeWithMakers() {
       }
     });
 
-    function displayCardComponent(markerData: any) {
-      const cardDiv = document.createElement("div");
-      cardDiv.id = "cardComponent";
-      cardDiv.id = "cardComponent";
-      cardDiv.style.position = "fixed";
-      cardDiv.style.top = "50%";
-      cardDiv.style.left = "50%";
-      cardDiv.style.transform = "translate(-50%, -50%)";
-      cardDiv.style.width = "90%";
-      cardDiv.style.maxWidth = "300px"; // Adjust max width as needed for mobile screens
-      cardDiv.style.backgroundColor = "#ffffff";
-      cardDiv.style.borderRadius = "10px";
-      cardDiv.style.padding = "20px";
-      cardDiv.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.1)";
-      cardDiv.style.zIndex = "9999";
-      
-      // use 3d marker coordinates to the card postion
-      const vector = new THREE.Vector3()
-      vector.copy(markerData.crd)
-      vector.project(camera)
+   function displayCardComponent(markerData: any) {
+     const cardDiv = document.createElement("div");
+     cardDiv.id = "cardComponent";
+     cardDiv.classList.add("hidden"); // Initially hidden
 
-      // convert the device coordinates to css
-      const halfWidth = window.innerWidth / 2
-      const halfHeight = window.innerHeight / 2
+     // Use CSS for initial positioning and centering:
+     cardDiv.style.position = "fixed";
+     cardDiv.style.top = "50%";
+     cardDiv.style.left = "50%";
+     cardDiv.style.transform = "translate(-50%, -50%)"; // Center horizontally and vertically
 
-      const cardMarginLeft = 50
-      const cardHeight = 50// change if the size is not okay
+     document.body.appendChild(cardDiv);
 
-      const cardLeft = (vector.x * halfWidth) + halfWidth + cardMarginLeft
-      const cardTop = -(vector.y * halfHeight) + halfHeight - cardHeight / 2
+     // Calculate card size based on content and viewport:
+     const cardHeight = Math.min(window.innerHeight * 0.7, 200); // Maximum card height of 200px or 70% of viewport
+     cardDiv.style.height = `${cardHeight}px`;
 
-      cardDiv.style.top = `${cardTop}px`
-      cardDiv.style.left = `${cardLeft}px`
-      cardDiv.style.zIndex = "999"
-      cardDiv.classList.remove("hidden")
+     const content = document.createElement("div");
+     content.classList.add("card-content"); // Add class for styling
+     cardDiv.appendChild(content);
 
-      // document.body.appendChild(cardDiv);
+     // Render content using PadCard within the new content div:
+     const root = createRoot(content);
+     root.render(
+       <PadCard
+         imageData={markerData.padData}
+         onClose={() => document.body.removeChild(cardDiv)}
+       />
+     );
 
-      cardDiv.animate(
-        [
-          { width: "0px", height: "0px", marginTop: "0px", marginLeft: "0px" },
-          {
-            width: `${230}px`,
-            height: `${cardHeight}px`,
-            marginTop: `-${cardHeight / 2}px`,
-            marginLeft: `${cardMarginLeft}px`,
-          },
-        ],
-        {
-          duration: 250,
-        }
-      );
-      const onClose = () => {
-        document.body.removeChild(cardDiv)
-      }
-      const root = createRoot(cardDiv);
-      root.render(<PadCard imageData={markerData.padData} onClose={onClose} />);
-    }
+     cardDiv.classList.remove("hidden");
+   }
+
 
     return () => {
       window.removeEventListener("resize", onWindowResize, false);
