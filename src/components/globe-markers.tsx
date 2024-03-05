@@ -279,18 +279,15 @@ export default function GlobeWithMakers() {
     function displayCardComponent(markerData: any) {
       const cardDiv = document.createElement("div");
       cardDiv.id = "cardComponent";
-      cardDiv.id = "cardComponent";
-      cardDiv.style.position = "fixed";
-      cardDiv.style.top = "50%";
-      cardDiv.style.left = "50%";
-      cardDiv.style.transform = "translate(-50%, -50%)";
-      cardDiv.style.width = "90%";
-      cardDiv.style.maxWidth = "300px"; // Adjust max width as needed for mobile screens
-      cardDiv.style.backgroundColor = "#ffffff";
-      cardDiv.style.borderRadius = "10px";
-      cardDiv.style.padding = "20px";
-      cardDiv.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.1)";
-      cardDiv.style.zIndex = "9999";
+      cardDiv.classList.add("hidden") // set the card to hide first
+      document.body.appendChild(cardDiv);
+
+      // cardDiv.style.position = "absolute"
+
+      // set the initial positioning
+      cardDiv.style.position = "absolute"
+      // cardDiv.style.width = "230px"
+      // cardDiv.style.height = "50px"
       
       // use 3d marker coordinates to the card postion
       const vector = new THREE.Vector3()
@@ -301,8 +298,8 @@ export default function GlobeWithMakers() {
       const halfWidth = window.innerWidth / 2
       const halfHeight = window.innerHeight / 2
 
-      const cardMarginLeft = 50
-      const cardHeight = 50// change if the size is not okay
+      const cardMarginLeft = 120
+      const cardHeight = 90 // change if the size is not okay
 
       const cardLeft = (vector.x * halfWidth) + halfWidth + cardMarginLeft
       const cardTop = -(vector.y * halfHeight) + halfHeight - cardHeight / 2
