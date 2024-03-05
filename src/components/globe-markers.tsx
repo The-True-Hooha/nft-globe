@@ -1,12 +1,14 @@
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import createStarFieldArea from "@/lib/3d/star-field";
 import * as THREE from "three";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import {
   CSS2DRenderer,
   CSS2DObject,
 } from "three/addons/renderers/CSS2DRenderer.js";
-
+import PadCard from "./pad-card";
+import { createRoot } from "react-dom/client";
+import fetchPadDataResult from "@/lib/fetch.data";
 
 export default function GlobeWithMakers() {
   useEffect(() => {
@@ -151,12 +153,8 @@ export default function GlobeWithMakers() {
       new THREE.MeshBasicMaterial({ color: 0x647f7f, wireframe: true })
     );
     globe.add(icshdrn);
-    // </ICOSAHEDRON>
-    // </GLOBE>
-
-    // handle the markers on the globe
     const markerCount = 100;
-    const markerInfo = [];
+    const markerInfo: any = [];
     const gMarker = new THREE.PlaneGeometry();
     let mMarker = new THREE.MeshBasicMaterial({
       color: 0xff3232,
@@ -194,25 +192,30 @@ export default function GlobeWithMakers() {
       
       vec4 diffuseColor = vec4( diffuse, opacity );`
         );
-        //console.log(shader.fragmentShader)
       },
     });
-    mMarker.defines = { USE_UV: " " }; // needed to be set to be able to work with UVs
+    mMarker.defines = { USE_UV: " " };
     let markers = new THREE.InstancedMesh(gMarker, mMarker, markerCount);
 
     let dummy = new THREE.Object3D();
     let phase = [];
+    // const getPadJson = fetchPadDataResult();
     for (let i = 0; i < markerCount; i++) {
+      const id = i + 1;
       dummy.position.randomDirection().setLength(rad + 0.1);
       dummy.lookAt(dummy.position.clone().setLength(rad + 1));
       dummy.updateMatrix();
       markers.setMatrixAt(i, dummy.matrix);
       phase.push(Math.random());
 
-      markerInfo.push({
-        id: i + 1,
-        mag: THREE.MathUtils.randInt(1, 10),
-        crd: dummy.position.clone(),
+      fetchPadDataResult().then((data) => {
+        const padData = data[i % data.length];
+        markerInfo[i] = {
+          id: id,
+          mag: THREE.MathUtils.randInt(1, 10),
+          crd: dummy.position.clone(),
+          padData: padData,
+        };
       });
     }
     gMarker.setAttribute(
@@ -240,6 +243,95 @@ export default function GlobeWithMakers() {
     }
     window.addEventListener("resize", onWindowResize, false);
 
+    const pointer = new THREE.Vector2();
+    const raycaster = new THREE.Raycaster();
+    let intersections: any[];
+
+    window.addEventListener("pointerdown", (event) => {
+      pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+      pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+      intersections = raycaster.intersectObject(markers).filter((m) => {
+        //@ts-ignore comment
+        return m.uv.subScalar(0.5).length() * 2 < 0.25;
+      });
+
+      if (intersections.length > 0) {
+        let marker = intersections[0];
+        let clickedMarkerId = marker.instanceId;
+        let clickedMarkerData = markerInfo.find(
+          (info: any) => info.id === clickedMarkerId
+        );
+        if (clickedMarkerData) {
+          let i = 0;
+          if (clickedMarkerData?.padData) {
+            displayCardComponent(clickedMarkerData);
+          } else {
+            fetchPadDataResult().then((data) => {
+              const padData = data[i % data.length];
+              displayCardComponent(padData);
+            });
+          }
+        }
+      }
+    });
+
+    function displayCardComponent(markerData: any) {
+      const cardDiv = document.createElement("div");
+      cardDiv.id = "cardComponent";
+      cardDiv.classList.add("hidden") // set the card to hide first
+      document.body.appendChild(cardDiv);
+
+      // cardDiv.style.position = "absolute"
+
+      // set the initial positioning
+      cardDiv.style.position = "absolute"
+      // cardDiv.style.width = "230px"
+      // cardDiv.style.height = "50px"
+      
+      // use 3d marker coordinates to the card postion
+      const vector = new THREE.Vector3()
+      vector.copy(markerData.crd)
+      vector.project(camera)
+
+      // convert the device coordinates to css
+      const halfWidth = window.innerWidth / 2
+      const halfHeight = window.innerHeight / 2
+
+      const cardMarginLeft = 120
+      const cardHeight = 90 // change if the size is not okay
+
+      const cardLeft = (vector.x * halfWidth) + halfWidth + cardMarginLeft
+      const cardTop = -(vector.y * halfHeight) + halfHeight - cardHeight / 2
+
+      cardDiv.style.top = `${cardTop}px`
+      cardDiv.style.left = `${cardLeft}px`
+      cardDiv.style.zIndex = "999"
+      cardDiv.classList.remove("hidden")
+
+      // document.body.appendChild(cardDiv);
+
+      cardDiv.animate(
+        [
+          { width: "0px", height: "0px", marginTop: "0px", marginLeft: "0px" },
+          {
+            width: `${230}px`,
+            height: `${cardHeight}px`,
+            marginTop: `-${cardHeight / 2}px`,
+            marginLeft: `${cardMarginLeft}px`,
+          },
+        ],
+        {
+          duration: 250,
+        }
+      );
+      const onClose = () => {
+        document.body.removeChild(cardDiv)
+      }
+      const root = createRoot(cardDiv);
+      root.render(<PadCard imageData={markerData.padData} onClose={onClose} />);
+    }
+
     return () => {
       window.removeEventListener("resize", onWindowResize, false);
       document.body.removeChild(renderer.domElement);
@@ -259,24 +351,23 @@ function addMarkersToGlobe(
     .radius;
 
   for (let i = 0; i < markerCount; i++) {
-    const marker = createMarker(0xff0000); // Red marker color, you can customize the color
-    const latitude = Math.random() * Math.PI - Math.PI / 2; // Random latitude (-π/2 to π/2)
-    const longitude = Math.random() * 2 * Math.PI - Math.PI; // Random longitude (-π to π)
-
-    // Calculate marker position on the globe surface
+    const marker = createMarker(0xff0000);
+    const latitude = Math.random() * Math.PI - Math.PI / 2;
+    const longitude = Math.random() * 2 * Math.PI - Math.PI;
     marker.position.setFromSphericalCoords(globeRadius, latitude, longitude);
-
-    // Align marker to face outward from the center of the globe
     marker.lookAt(globe.position);
-
     markersGroup.add(marker);
   }
-
   scene.add(markersGroup);
 }
 
 function createMarker(color: number): THREE.Mesh {
-  const geometry = new THREE.SphereGeometry(0.05, 32, 32); // Adjust the size as needed
+  const geometry = new THREE.SphereGeometry(0.05, 32, 32);
   const material = new THREE.MeshBasicMaterial({ color });
   return new THREE.Mesh(geometry, material);
+}
+
+function handleSmoothStep(min: number, max: number, value: number): number {
+  const x = Math.max(0, Math.min(1, (value - min) / (max - min)));
+  return x * x * (3 - 2 * x);
 }

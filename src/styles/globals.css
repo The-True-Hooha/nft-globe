@@ -31,3 +31,13 @@ body {
     text-wrap: balance;
   }
 }
+
+@font-face {
+  font-family: "Silkscreen";
+  src: url("/assets/fonts/Silkscreen-Regular.ttf");
+}
+
+@font-face {
+  font-family: "OctaBrain";
+  src: url("/assets/fonts/OctaBrain.ttf");
+}

@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import Circle from "../../../public/assets/circle.png"
 
 interface StarFieldOpts {
     numStars?: number
