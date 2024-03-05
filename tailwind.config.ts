@@ -13,8 +13,12 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      fontFamily: {
+        octaBrain: ["OctaBrain", "sans-serif"],
+        silkscreen: ["Silkscreen", "sans-serif"],
+      },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate",)],
 };
 export default config;
