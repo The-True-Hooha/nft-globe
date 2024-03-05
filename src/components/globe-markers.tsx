@@ -276,61 +276,39 @@ export default function GlobeWithMakers() {
       }
     });
 
-    function displayCardComponent(markerData: any) {
-      const cardDiv = document.createElement("div");
-      cardDiv.id = "cardComponent";
-      cardDiv.classList.add("hidden") // set the card to hide first
-      document.body.appendChild(cardDiv);
+   function displayCardComponent(markerData: any) {
+     const cardDiv = document.createElement("div");
+     cardDiv.id = "cardComponent";
+     cardDiv.classList.add("hidden"); // Initially hidden
 
-      // cardDiv.style.position = "absolute"
+     // Use CSS for initial positioning and centering:
+     cardDiv.style.position = "fixed";
+     cardDiv.style.top = "50%";
+     cardDiv.style.left = "50%";
+     cardDiv.style.transform = "translate(-50%, -50%)"; // Center horizontally and vertically
 
-      // set the initial positioning
-      cardDiv.style.position = "absolute"
-      // cardDiv.style.width = "230px"
-      // cardDiv.style.height = "50px"
-      
-      // use 3d marker coordinates to the card postion
-      const vector = new THREE.Vector3()
-      vector.copy(markerData.crd)
-      vector.project(camera)
+     document.body.appendChild(cardDiv);
 
-      // convert the device coordinates to css
-      const halfWidth = window.innerWidth / 2
-      const halfHeight = window.innerHeight / 2
+     // Calculate card size based on content and viewport:
+     const cardHeight = Math.min(window.innerHeight * 0.7, 200); // Maximum card height of 200px or 70% of viewport
+     cardDiv.style.height = `${cardHeight}px`;
 
-      const cardMarginLeft = 120
-      const cardHeight = 90 // change if the size is not okay
+     const content = document.createElement("div");
+     content.classList.add("card-content"); // Add class for styling
+     cardDiv.appendChild(content);
 
-      const cardLeft = (vector.x * halfWidth) + halfWidth + cardMarginLeft
-      const cardTop = -(vector.y * halfHeight) + halfHeight - cardHeight / 2
+     // Render content using PadCard within the new content div:
+     const root = createRoot(content);
+     root.render(
+       <PadCard
+         imageData={markerData.padData}
+         onClose={() => document.body.removeChild(cardDiv)}
+       />
+     );
 
-      cardDiv.style.top = `${cardTop}px`
-      cardDiv.style.left = `${cardLeft}px`
-      cardDiv.style.zIndex = "999"
-      cardDiv.classList.remove("hidden")
+     cardDiv.classList.remove("hidden");
+   }
 
-      // document.body.appendChild(cardDiv);
-
-      cardDiv.animate(
-        [
-          { width: "0px", height: "0px", marginTop: "0px", marginLeft: "0px" },
-          {
-            width: `${230}px`,
-            height: `${cardHeight}px`,
-            marginTop: `-${cardHeight / 2}px`,
-            marginLeft: `${cardMarginLeft}px`,
-          },
-        ],
-        {
-          duration: 250,
-        }
-      );
-      const onClose = () => {
-        document.body.removeChild(cardDiv)
-      }
-      const root = createRoot(cardDiv);
-      root.render(<PadCard imageData={markerData.padData} onClose={onClose} />);
-    }
 
     return () => {
       window.removeEventListener("resize", onWindowResize, false);
