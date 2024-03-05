@@ -1,12 +1,11 @@
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import createStarFieldArea from "@/lib/3d/star-field";
 import * as THREE from "three";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import {
   CSS2DRenderer,
   CSS2DObject,
 } from "three/addons/renderers/CSS2DRenderer.js";
-import ReactDOM from "react-dom";
 import PadCard from "./pad-card";
 import { createRoot } from "react-dom/client";
 import fetchPadDataResult from "@/lib/fetch.data";
@@ -195,7 +194,7 @@ export default function GlobeWithMakers() {
         );
       },
     });
-    mMarker.defines = { USE_UV: " " }; // needed to be set to be able to work with UVs
+    mMarker.defines = { USE_UV: " " };
     let markers = new THREE.InstancedMesh(gMarker, mMarker, markerCount);
 
     let dummy = new THREE.Object3D();
@@ -279,8 +278,16 @@ export default function GlobeWithMakers() {
     function displayCardComponent(markerData) {
       const cardDiv = document.createElement("div");
       cardDiv.id = "cardComponent";
-      cardDiv.style.position = "absolute"
+      cardDiv.classList.add("hidden") // set the card to hide first
+      document.body.appendChild(cardDiv);
 
+      // cardDiv.style.position = "absolute"
+
+      // set the initial positioning
+      cardDiv.style.position = "absolute"
+      // cardDiv.style.width = "230px"
+      // cardDiv.style.height = "50px"
+      
       // use 3d marker coordinates to the card postion
       const vector = new THREE.Vector3()
       vector.copy(markerData.crd)
@@ -290,14 +297,33 @@ export default function GlobeWithMakers() {
       const halfWidth = window.innerWidth / 2
       const halfHeight = window.innerHeight / 2
 
-      vector.x = (vector.x * halfWidth) + halfWidth
-      vector.y = -(vector.y * halfHeight) + halfHeight
+      const cardMarginLeft = 120
+      const cardHeight = 90 // change if the size is not okay
 
-      cardDiv.style.top = `${vector.y}px`
-      cardDiv.style.left = `${vector.x}`
+      const cardLeft = (vector.x * halfWidth) + halfWidth + cardMarginLeft
+      const cardTop = -(vector.y * halfHeight) + halfHeight - cardHeight / 2
+
+      cardDiv.style.top = `${cardTop}px`
+      cardDiv.style.left = `${cardLeft}px`
       cardDiv.style.zIndex = "999"
-      document.body.appendChild(cardDiv);
+      cardDiv.classList.remove("hidden")
 
+      // document.body.appendChild(cardDiv);
+
+      cardDiv.animate(
+        [
+          { width: "0px", height: "0px", marginTop: "0px", marginLeft: "0px" },
+          {
+            width: `${230}px`,
+            height: `${cardHeight}px`,
+            marginTop: `-${cardHeight / 2}px`,
+            marginLeft: `${cardMarginLeft}px`,
+          },
+        ],
+        {
+          duration: 250,
+        }
+      );
       const onClose = () => {
         document.body.removeChild(cardDiv)
       }
