@@ -62,7 +62,7 @@ export default function PadCard({
   }, []);
   return (
     <Draggable>
-      <div className="dna-text w-4/5 mx-auto mt-10 lg:w-[320px] lg:h-[590px] rounded-lg bg-gradient-to-br from-[#77C6A7] font-silkscreen to-[#4EA8A3] shadow-lg p-4 relative">
+      <div className="dna-text z-[999px] w-4/5 mx-auto mt-10 lg:w-[320px] lg:h-[590px] rounded-lg bg-gradient-to-br from-[#77C6A7] font-silkscreen to-[#4EA8A3] shadow-lg p-4 relative">
         <h2 className="text-white text-xl font-bold flex font-silkscreen justify-center">
           {name}
         </h2>
@@ -89,7 +89,7 @@ export default function PadCard({
           </Marquee>
 
           <div className="w-full">
-            <div className="pb-[10px] font-medium font-silkscreen text-[#215f3a] flex justify-between">
+            <div className="pb-[10px] font-medium font-mono text-[#215f3a] flex justify-between">
               trait type<span>value</span>
             </div>
             <div className="text-white">
