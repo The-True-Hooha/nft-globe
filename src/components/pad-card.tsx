@@ -3,6 +3,7 @@ import Draggable from "react-draggable";
 import { MdOutlineContentCopy } from "react-icons/md";
 import gsap from "gsap";
 import Marquee from "react-fast-marquee";
+import Image from "next/image";
 interface Attribute {
   trait_type: string;
   value: string;
@@ -71,10 +72,13 @@ export default function PadCard({
         <div className="flex flex-col items-center justify-center p-4">
           <div className="w-full mb-4 flex justify-center">
             {imageData && (
-              <img
+              <Image
                 alt={name}
                 className="h-[200px] w-full object-cover rounded-md"
                 src={`/assets/pads/${imageData?.image}`}
+                width={200}
+                height={200}
+                priority={true}
               />
             )}
           </div>
