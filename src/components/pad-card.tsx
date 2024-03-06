@@ -31,6 +31,8 @@ export default function PadCard({
   const [copied, setCopied] = useState(false);
   const nodeRef = useRef(null);
 
+  const filterLiquid = attributes.filter((v) => v.trait_type !== "liquid")
+
   const copyToClipboard = (id: string) => {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(id).then(() => {
@@ -65,10 +67,10 @@ export default function PadCard({
   return (
     <Draggable>
       <div className="dna-text w-[250px] mx-auto mt-10 lg:w-[320px] lg:h-[590px] rounded-lg bg-gradient-to-br from-[#77C6A7] font-silkscreen to-[#4EA8A3] shadow-lg p-4 relative">
-        <div className="text-white text-[25px] font-bold flex font-silkscreen w-full">
-          <h2 className="align-middle ml-[80px]">{name}</h2>
+        <div className="text-white text-[18px] lg:text-[25px] font-bold flex font-silkscreen w-full">
+          <h2 className="align-middle ml-[70px] lg:ml-[80px]">{name}</h2>
           <button
-            className="absolute right-6 align-middle text-[25px]"
+            className="absolute lg:right-6 right-8 align-middle lg:text-[25px]"
             onClick={handleClose}
             onTouchEnd={handleTouchClose}
             title="close"
@@ -104,12 +106,12 @@ export default function PadCard({
               trait type<span>value</span>
             </div>
             <div className="text-white font-silkscreen">
-              {attributes?.map((attr, index) => (
+              {filterLiquid?.map((attr, index) => (
                 <div key={index} className="flex justify-between">
                   <span className="font-normal lowercase">
                     {attr.trait_type}
                   </span>
-                  <span className="text-right">{attr.value}</span>
+                  <span className="text-right ml-4">{attr.value}</span>
                 </div>
               ))}
             </div>
