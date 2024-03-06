@@ -44,6 +44,9 @@ export default function PadCard({
       console.error("Clipboard API not supported");
     }
   };
+
+
+
   useEffect(() => {
     const showDNA = gsap.fromTo(
       ".dna-text",
@@ -60,13 +63,31 @@ export default function PadCard({
       showDNA.kill();
     };
   }, []);
+
+  const handleCopy = () => {
+    copyToClipboard(imageData.dna)
+  }
+
+  const handleClose = () => {
+    onClose()
+  }
+
+  const handleTouchCopy = (event: React.TouchEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    handleCopy()
+
+  }
+  const handleTouchClose = (event: React.TouchEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    handleClose();
+  };
   return (
     <Draggable>
-      <div className="dna-text z-[999px] w-4/5 mx-auto mt-10 lg:w-[320px] lg:h-[590px] rounded-lg bg-gradient-to-br from-[#77C6A7] font-silkscreen to-[#4EA8A3] shadow-lg p-4 relative">
+      <div className="dna-text w-[250px] mx-auto mt-10 lg:w-[320px] lg:h-[590px] rounded-lg bg-gradient-to-br from-[#77C6A7] font-silkscreen to-[#4EA8A3] shadow-lg p-4 relative">
         <h2 className="text-white text-xl font-bold flex font-silkscreen justify-center">
           {name}
         </h2>
-        <button className="absolute top-4 right-4 text-white" onClick={onClose}>
+        <button className="absolute top-4 right-4 text-white" onClick={handleClose} onTouchEnd={handleTouchClose}>
           close
         </button>
         <div className="flex flex-col items-center justify-center p-4">
@@ -76,20 +97,20 @@ export default function PadCard({
                 alt={name}
                 className="h-[200px] w-full object-cover rounded-md"
                 src={`/assets/pads/${imageData?.image}`}
-                width={200}
-                height={200}
+                width={150}
+                height={150}
                 priority={true}
               />
             )}
           </div>
-          <Marquee direction="right" speed={40} className="mt-[-19px]">
-            <div className="dna-text text-white whitespace-wrap font-medium text-[22px] font-silkscreen p-6">
+          <Marquee direction="right" speed={40} className="lg:mt-[-19px] mt-[-25px]">
+            <div className="dna-text text-white whitespace-wrap font-medium text-[20px] lg:text-[22px] font-silkscreen p-6">
               DNA:: {dna}
             </div>
           </Marquee>
 
           <div className="w-full">
-            <div className="pb-[10px] font-medium font-mono text-[#215f3a] flex justify-between">
+            <div className="lg:pb-[10px] font-medium font-mono text-[#215f3a] flex justify-between">
               trait type<span>value</span>
             </div>
             <div className="text-white">
@@ -107,9 +128,8 @@ export default function PadCard({
         <div className="flex justify-center">
           <button
             className="bg-[#183f2f] hover:bg-[#316938] text-white font-bold py-2 px-4 rounded-full"
-            onClick={() => {
-              copyToClipboard(imageData.dna);
-            }}
+            onClick={handleCopy}
+            onTouchEnd={handleTouchCopy}
             id="copyButton"
             title="copy id"
           >
