@@ -45,25 +45,6 @@ export default function PadCard({
     }
   };
 
-
-
-  useEffect(() => {
-    const showDNA = gsap.fromTo(
-      ".dna-text",
-      { opacity: 0, translateY: 20 },
-      {
-        opacity: 1,
-        translateY: 0,
-        duration: 2,
-        ease: "elastic.out(1, 0.4)",
-        stagger: 0.1,
-      }
-    );
-    return () => {
-      showDNA.kill();
-    };
-  }, []);
-
   const handleCopy = () => {
     copyToClipboard(imageData.dna)
   }
@@ -87,8 +68,12 @@ export default function PadCard({
         <h2 className="text-white text-xl font-bold flex font-silkscreen justify-center">
           {name}
         </h2>
-        <button className="absolute top-4 right-4 text-white" onClick={handleClose} onTouchEnd={handleTouchClose}>
-          close
+        <button
+          className="absolute mt-[-50px] right-3 text-[40px] text-white"
+          onClick={handleClose}
+          onTouchEnd={handleTouchClose}
+        >
+          X
         </button>
         <div className="flex flex-col items-center justify-center p-4">
           <div className="w-full mb-4 flex justify-center">
@@ -103,23 +88,27 @@ export default function PadCard({
               />
             )}
           </div>
-          <Marquee direction="right" speed={40} className="lg:mt-[-19px] mt-[-25px]">
+          <Marquee
+            direction="right"
+            speed={40}
+            className="lg:mt-[-19px] mt-[-25px]"
+          >
             <div className="dna-text text-white whitespace-wrap font-medium text-[20px] lg:text-[22px] font-silkscreen p-6">
               DNA:: {dna}
             </div>
           </Marquee>
 
           <div className="w-full">
-            <div className="lg:pb-[10px] font-medium font-mono text-[#215f3a] flex justify-between">
+            <div className="lg:pb-[10px] font-medium font-silkscreen text-[#215f3a] flex justify-between">
               trait type<span>value</span>
             </div>
-            <div className="text-white">
+            <div className="text-white font-silkscreen">
               {attributes?.map((attr, index) => (
-                <div key={index} className="flex justify-between font-mono">
+                <div key={index} className="flex justify-between">
                   <span className="font-normal lowercase">
                     {attr.trait_type}
                   </span>
-                  <span>{attr.value}</span>
+                  <span className="text-right">{attr.value}</span>
                 </div>
               ))}
             </div>
