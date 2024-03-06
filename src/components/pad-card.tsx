@@ -65,13 +65,14 @@ export default function PadCard({
   return (
     <Draggable>
       <div className="dna-text w-[250px] mx-auto mt-10 lg:w-[320px] lg:h-[590px] rounded-lg bg-gradient-to-br from-[#77C6A7] font-silkscreen to-[#4EA8A3] shadow-lg p-4 relative">
-        <h2 className="text-white text-xl font-bold flex font-silkscreen justify-center">
+        <h2 className="text-white text-[25px] font-bold flex font-silkscreen justify-center">
           {name}
         </h2>
         <button
-          className="absolute mt-[-50px] right-3 text-[40px] text-white"
+          className="absolute mt-[-38px] right-3 text-[25px] text-white"
           onClick={handleClose}
           onTouchEnd={handleTouchClose}
+          title="close"
         >
           X
         </button>

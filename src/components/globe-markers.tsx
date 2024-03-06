@@ -278,10 +278,11 @@ export default function GlobeWithMakers() {
 
     function displayCardComponent(markerData: any) {
       const cardDiv = document.createElement("div");
+      const viewPortHeight = window.innerHeight
       cardDiv.id = "cardComponent";
       cardDiv.classList.add("hidden");
       cardDiv.style.position = "fixed";
-      cardDiv.style.top = "35%";
+      cardDiv.style.top = viewPortHeight < 768 ? "10%" : "40%";
       cardDiv.style.left = "50%";
       cardDiv.style.transform = "translate(-50%, -50%)";
 
