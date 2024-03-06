@@ -276,39 +276,40 @@ export default function GlobeWithMakers() {
       }
     });
 
-   function displayCardComponent(markerData: any) {
-     const cardDiv = document.createElement("div");
-     cardDiv.id = "cardComponent";
-     cardDiv.classList.add("hidden"); // Initially hidden
+    function displayCardComponent(markerData: any) {
+      const cardDiv = document.createElement("div");
+      cardDiv.id = "cardComponent";
+      cardDiv.classList.add("hidden");
+      cardDiv.style.position = "fixed";
+      cardDiv.style.top = "50%";
+      cardDiv.style.left = "50%";
+      cardDiv.style.transform = "translate(-50%, -50%)";
 
-     // Use CSS for initial positioning and centering:
-     cardDiv.style.position = "fixed";
-     cardDiv.style.top = "50%";
-     cardDiv.style.left = "50%";
-     cardDiv.style.transform = "translate(-50%, -50%)"; // Center horizontally and vertically
+      document.body.appendChild(cardDiv);
+      const maxMobileHeight = 200;
+      const maxLargeHeight = 300;
+      const viewportWidth = window.innerWidth;
 
-     document.body.appendChild(cardDiv);
+      const cardHeight =
+        viewportWidth < 768
+          ? Math.min(window.innerHeight * 0.8, maxMobileHeight)
+          : Math.min(window.innerHeight * 0.6, maxLargeHeight);
+      cardDiv.style.height = `${cardHeight}px`;
 
-     // Calculate card size based on content and viewport:
-     const cardHeight = Math.min(window.innerHeight * 0.7, 200); // Maximum card height of 200px or 70% of viewport
-     cardDiv.style.height = `${cardHeight}px`;
+      const content = document.createElement("div");
+      content.classList.add("card-content"); // Add class for styling
+      cardDiv.appendChild(content);
 
-     const content = document.createElement("div");
-     content.classList.add("card-content"); // Add class for styling
-     cardDiv.appendChild(content);
+      const onClose = () => {
+        console.log("closing:::")
+        document.body.removeChild(cardDiv);
+      };
+      // cardDiv.addEventListener("touchend", onClose);
+      const root = createRoot(content);
+      root.render(<PadCard imageData={markerData.padData} onClose={onClose} />);
 
-     // Render content using PadCard within the new content div:
-     const root = createRoot(content);
-     root.render(
-       <PadCard
-         imageData={markerData.padData}
-         onClose={() => document.body.removeChild(cardDiv)}
-       />
-     );
-
-     cardDiv.classList.remove("hidden");
-   }
-
+      cardDiv.classList.remove("hidden");
+    }
 
     return () => {
       window.removeEventListener("resize", onWindowResize, false);
