@@ -281,7 +281,7 @@ export default function GlobeWithMakers() {
       cardDiv.id = "cardComponent";
       cardDiv.classList.add("hidden");
       cardDiv.style.position = "fixed";
-      cardDiv.style.top = "40%";
+      cardDiv.style.top = "35%";
       cardDiv.style.left = "50%";
       cardDiv.style.transform = "translate(-50%, -50%)";
 
