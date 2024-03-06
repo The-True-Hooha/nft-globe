@@ -65,16 +65,17 @@ export default function PadCard({
   return (
     <Draggable>
       <div className="dna-text w-[250px] mx-auto mt-10 lg:w-[320px] lg:h-[590px] rounded-lg bg-gradient-to-br from-[#77C6A7] font-silkscreen to-[#4EA8A3] shadow-lg p-4 relative">
-        <h2 className="text-white text-xl font-bold flex font-silkscreen justify-center">
-          {name}
-        </h2>
-        <button
-          className="absolute mt-[-50px] right-3 text-[40px] text-white"
-          onClick={handleClose}
-          onTouchEnd={handleTouchClose}
-        >
-          X
-        </button>
+        <div className="text-white text-[25px] font-bold flex font-silkscreen w-full">
+          <h2 className="align-middle ml-[80px]">{name}</h2>
+          <button
+            className="absolute right-6 align-middle text-[25px]"
+            onClick={handleClose}
+            onTouchEnd={handleTouchClose}
+            title="close"
+          >
+            X
+          </button>
+        </div>
         <div className="flex flex-col items-center justify-center p-4">
           <div className="w-full mb-4 flex justify-center">
             {imageData && (
