@@ -297,14 +297,12 @@ export default function GlobeWithMakers() {
       cardDiv.style.height = `${cardHeight}px`;
 
       const content = document.createElement("div");
-      content.classList.add("card-content"); // Add class for styling
+      content.classList.add("card-content");
       cardDiv.appendChild(content);
 
       const onClose = () => {
-        console.log("closing:::")
         document.body.removeChild(cardDiv);
       };
-      // cardDiv.addEventListener("touchend", onClose);
       const root = createRoot(content);
       root.render(<PadCard imageData={markerData.padData} onClose={onClose} />);
 
