@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";
 import { serialize } from "cookie";
 import { genSalt, hash, compareSync } from "bcrypt";
-import { Secret, sign, verify, JwtPayload } from "jsonwebtoken";
+import { Secret, sign } from "jsonwebtoken";
 
 export default async function handler(
   req: NextApiRequest,
