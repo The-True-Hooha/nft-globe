@@ -8,10 +8,15 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { email, password } = req.body;
+  const { email, password, code } = req.body;
   const joinBody = `${email}+${password}`;
   const hashAuthDetails = await hashString(joinBody);
   try {
+    if (code !== process.env.CODE) {
+      res
+        .status(404)
+        .send({ message: "error, you're not permitted to access this route" });
+    }
     const readPasswordFile = fs
       .readFileSync("password.txt", "utf-8")
       .split("\n");
@@ -24,14 +29,15 @@ export default async function handler(
       compareSync(joinBody, v)
     );
 
-    
     if (checkHashExist) {
       res.status(400).send({ message: "this email or password already exist" });
     } else {
       fs.appendFileSync("password.txt", `${hashAuthDetails}\n`);
-      
+
       res.setHeader("Set-Cookie", setCookieProps(email));
-      res.status(201).send({ message: "signup successful", data: setCookieProps(email) });
+      res
+        .status(201)
+        .send({ message: "signup successful", data: setCookieProps(email) });
     }
   } catch (err: any) {
     if (err.code === "ENOENT") {
@@ -51,7 +57,6 @@ async function hashString(text: string): Promise<string> {
   return hashedPassword;
 }
 
-
 function setCookieProps(email: string): string {
   const atCookie = serialize("fronk-cartel", createAccessToken(email), {
     httpOnly: false,
@@ -59,7 +64,7 @@ function setCookieProps(email: string): string {
     maxAge: 60 * 60 * 24 * 3, // expires in 3 days
     path: "/",
   });
-  return atCookie
+  return atCookie;
 }
 
 const createAccessToken = (email: string): string => {

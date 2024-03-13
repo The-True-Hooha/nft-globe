@@ -9,7 +9,12 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    const { email, password } = req.body;
+    const { email, password, code } = req.body;
+    if (code !== process.env.CODE) {
+      res
+        .status(404)
+        .send({ message: "error, you're not permitted to access this route" });
+    }
     const joinBody = `${email}+${password}`;
     const hashAuthDetails = await hashString(joinBody);
     const readPasswordFile = fs
@@ -28,12 +33,12 @@ export default async function handler(
         message: "password or email does not exist",
         data: null,
       });
-      }
-       res.setHeader("Set-Cookie", setCookieProps(email));
-       res.status(200).send({
-         message: "login successful",
-         data: setCookieProps(email),
-       });
+    }
+    res.setHeader("Set-Cookie", setCookieProps(email));
+    res.status(200).send({
+      message: "login successful",
+      data: setCookieProps(email),
+    });
   } catch (err: any) {
     res.status(500).send({ message: "Internal server error", error: err });
   }
