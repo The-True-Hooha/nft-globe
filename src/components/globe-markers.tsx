@@ -15,7 +15,8 @@ export default function GlobeWithMakers() {
     const w = window.innerWidth;
     const h = window.innerHeight;
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
+    // set the field of view to display how the object is seen from the camera perspective , higher value indicates a wider field of view
+    const camera = new THREE.PerspectiveCamera(120, w / h, 0.1, 1000);
     camera.position.set(0.5, 0.5, 1).setLength(14);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(innerWidth, innerHeight);
@@ -76,18 +77,8 @@ export default function GlobeWithMakers() {
       uvs.push((sph.theta + Math.PI) / (Math.PI * 2), 1.0 - sph.phi / Math.PI);
     }
 
-    const earthGroup = new THREE.Group();
-    // earthGroup.rotation.z = (-23.4 * Math.PI) / 180;
-    // scene.add(earthGroup);
-
     const detail = 12;
-    const geometry = new THREE.IcosahedronGeometry(1, detail);
-    const material = new THREE.MeshPhongMaterial({
-      color: "#77C6A7",
-      shininess: 5,
-      flatShading: false,
-    });
-    const earthMesh = new THREE.Mesh(geometry, material);
+
     // earthGroup.add(earthMesh);
     const ambientLight = new THREE.AmbientLight(0xffffff, 4); // Add ambient light
     scene.add(ambientLight);
@@ -144,14 +135,35 @@ export default function GlobeWithMakers() {
         //console.log(shader.fragmentShader);
       },
     });
-    let globe = new THREE.Points(g, m);
-    scene.add(globe);
+    const material = new THREE.MeshBasicMaterial({
+      color: "#77C6A7",
+      // shininess: 5,
+      // flatShading: false,
+    });
 
-    // <ICOSAHEDRON>
+    const geometry = new THREE.IcosahedronGeometry(1, detail);
+    let globe = new THREE.Points(g, m);
+    // scene.add(globe);
+
     let icshdrn = new THREE.Mesh(
       new THREE.IcosahedronGeometry(rad, 1),
-      new THREE.MeshBasicMaterial({ color: 0x647f7f, wireframe: true })
+      // new THREE.MeshBasicMaterial({ color: 0x647f7f, wireframe: true })
+      new THREE.MeshPhongMaterial({
+        color: "#77C6A7",
+        shininess: 5,
+      })
     );
+
+    const sg = new THREE.SphereGeometry(5, 50, 50);
+    const earthMesh = new THREE.Mesh(sg, material);
+    const earthGroup = new THREE.Group();
+    earthGroup.add(earthMesh);
+    // earthGroup.rotation.z = (-23.4 * Math.PI) / 180;
+    // earthGroup.add(icshdrn);
+    scene.add(earthGroup);
+
+    // <ICOSAHEDRON>
+
     globe.add(icshdrn);
     const markerCount = 100;
     const markerInfo: any = [];
@@ -278,7 +290,7 @@ export default function GlobeWithMakers() {
 
     function displayCardComponent(markerData: any) {
       const cardDiv = document.createElement("div");
-      const viewPortHeight = window.innerHeight
+      const viewPortHeight = window.innerHeight;
       cardDiv.id = "cardComponent";
       cardDiv.classList.add("hidden");
       cardDiv.style.position = "fixed";

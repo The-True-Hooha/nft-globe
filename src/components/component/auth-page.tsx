@@ -53,9 +53,9 @@ export function AuthPage() {
         <h1 className="lg:text-4xl text-[20px] mb-[20px] font-bold font-silkscreen">
           To Access your account
         </h1>
-        <div className="lg:w-[60%] w-[85%] mx-auto">
+        <div className="lg:w-[60%] w-[100%] mx-auto">
           <Marquee direction="left" speed={80} className="">
-            <p className="text-[15px] lg:mt-[10px] leading-[1.25] font-mono">
+            <p className="text-[10px] lg:text-[20px] lg:mt-[10px] leading-[1.25] font-silkscreen">
               Please enter your email and password
             </p>
           </Marquee>
@@ -108,11 +108,11 @@ export function AuthPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="isNewAccount" className="font-mono">
+              <Label htmlFor="isNewAccount" className="font-silkscreen text-[12px]">
                 New Account?
               </Label>
               <input
-                className="p-2 border mt-4 bg-green-700 rounded-md focus:outline-none focus:ring"
+                className="p-2 border mt-4 mr-6 bg-green-700 rounded-md focus:outline-none focus:ring"
                 id="isNewAccount"
                 type="checkbox"
                 checked={isNewAccount}
@@ -120,7 +120,7 @@ export function AuthPage() {
               />
             </div>
             <Button
-              className="w-full text-white rounded-md py-2 hover:bg-green-700 focus:outline-none focus:ring"
+              className="w-full font-silkscreen text-white rounded-md py-2 hover:bg-green-700 focus:outline-none focus:ring"
               type="submit"
               onSubmit={handleSubmit}
             >
