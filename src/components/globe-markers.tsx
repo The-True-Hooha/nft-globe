@@ -15,7 +15,8 @@ export default function GlobeWithMakers() {
     const w = window.innerWidth;
     const h = window.innerHeight;
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
+    // set the field of view to display how the object is seen from the camera perspective , higher value indicates a wider field of view
+    const camera = new THREE.PerspectiveCamera(120, w / h, 0.1, 1000);
     camera.position.set(0.5, 0.5, 1).setLength(14);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(innerWidth, innerHeight);
@@ -152,8 +153,8 @@ export default function GlobeWithMakers() {
         shininess: 5,
       })
     );
-    
-    const sg = new THREE.SphereGeometry(5, 50, 50)
+
+    const sg = new THREE.SphereGeometry(5, 50, 50);
     const earthMesh = new THREE.Mesh(sg, material);
     const earthGroup = new THREE.Group();
     earthGroup.add(earthMesh);
