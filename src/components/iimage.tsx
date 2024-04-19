@@ -11,7 +11,7 @@ import { createRoot } from "react-dom/client";
 import fetchPadDataResult from "@/lib/fetch.data";
 import ZoomComponent from "@/components/zoom";
 
-export default function ImageThree() {
+export default function Home() {
   const [isZoomed, setIsZoomed] = useState(false);
   const [zControls, setZControls]: any = useState(null);
   const controlsRef = useRef<OrbitControls | any>(null);
@@ -164,7 +164,10 @@ export default function ImageThree() {
     const markerInfo: any = [];
     const gMarker = new THREE.PlaneGeometry();
     let mMarker = new THREE.MeshBasicMaterial({
-      color: 0xff3232,
+      color: 0x0000ff, // changed the marker color
+      side: THREE.DoubleSide, // add a new prop
+      transparent: true,
+      opacity: 0.8,
       //@ts-ignore comment
       onBeforeCompile: (shader: any) => {
         shader.uniforms.time = globalUniforms.time;

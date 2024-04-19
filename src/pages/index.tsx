@@ -4,7 +4,7 @@ import { useNavigationEvent } from "@/components/component/use-nav";
 import LoaderUI from "@/components/component/loader";
 import { lazy, Suspense, useEffect, useState } from "react";
 
-const LazyLoad = lazy(() => import('../components/globe-markers'))
+const LazyLoad = lazy(() => import('../components/iimage'))
 
 export default function Home() {
 //   const [loading, setLoading] = useState(true);

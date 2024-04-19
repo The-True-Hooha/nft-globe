@@ -11,6 +11,9 @@
   }
 }
 
+html {
+  overflow-x: hidden;
+}
 .rotate-anim {
   animation: rotateAnimation 10s linear infinite; /* Adjust duration and timing function as needed */
 }

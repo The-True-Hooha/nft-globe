@@ -31,7 +31,7 @@ export default function PadCard({
   const [copied, setCopied] = useState(false);
   const nodeRef = useRef(null);
 
-  const filterLiquid = attributes.filter((v) => v.trait_type !== "liquid")
+  const filterLiquid = attributes?.filter((v) => v?.trait_type !== "liquid")
 
   const copyToClipboard = (id: string) => {
     if (navigator.clipboard && navigator.clipboard.writeText) {

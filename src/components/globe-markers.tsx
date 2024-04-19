@@ -137,8 +137,6 @@ export default function GlobeWithMakers() {
     });
     const material = new THREE.MeshBasicMaterial({
       color: "#77C6A7",
-      // shininess: 5,
-      // flatShading: false,
     });
 
     const geometry = new THREE.IcosahedronGeometry(1, detail);
@@ -330,34 +328,3 @@ export default function GlobeWithMakers() {
   return null;
 }
 
-function addMarkersToGlobe(
-  globe: THREE.Mesh,
-  markerCount: number,
-  scene: THREE.Scene
-) {
-  const markersGroup = new THREE.Group();
-
-  const globeRadius = (globe.geometry as THREE.SphereGeometry).parameters
-    .radius;
-
-  for (let i = 0; i < markerCount; i++) {
-    const marker = createMarker(0xff0000);
-    const latitude = Math.random() * Math.PI - Math.PI / 2;
-    const longitude = Math.random() * 2 * Math.PI - Math.PI;
-    marker.position.setFromSphericalCoords(globeRadius, latitude, longitude);
-    marker.lookAt(globe.position);
-    markersGroup.add(marker);
-  }
-  scene.add(markersGroup);
-}
-
-function createMarker(color: number): THREE.Mesh {
-  const geometry = new THREE.SphereGeometry(0.05, 32, 32);
-  const material = new THREE.MeshBasicMaterial({ color });
-  return new THREE.Mesh(geometry, material);
-}
-
-function handleSmoothStep(min: number, max: number, value: number): number {
-  const x = Math.max(0, Math.min(1, (value - min) / (max - min)));
-  return x * x * (3 - 2 * x);
-}
