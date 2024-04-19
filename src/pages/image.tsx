@@ -42,6 +42,7 @@ export default function ImageThree() {
     controls.enablePan = false;
     controls.minDistance = 6;
     controls.maxDistance = 15;
+    controls.enableZoom = true
     controls.enableDamping = true;
     controls.autoRotate = true;
     controls.autoRotateSpeed *= 0.25;
@@ -330,22 +331,33 @@ export default function ImageThree() {
   }, []);
 
   const handleZoomChange = () => {
-    if (controlsRef.current) {
-      const distance = controlsRef.current.getDistance();
-      const zoomThreshold = 6;
-      if (distance <= zoomThreshold && !isZoomed) {
-        setIsZoomed(true);
-      } else if (distance > zoomThreshold && isZoomed) {
-        setIsZoomed(false);
-      }
-    }
+   if (controlsRef.current) {
+     const distance = controlsRef.current.getDistance();
+     const zoomThreshold = 6;
+     if (distance <= zoomThreshold && !isZoomed) {
+       setIsZoomed(true);
+       controlsRef.current.autoRotate = false;
+     } else if (distance > zoomThreshold && isZoomed) {
+       setIsZoomed(false);
+       controlsRef.current.autoRotate = true;
+     }
+   }
   };
   
-  return (<>
-    {isZoomed && (
-      <div>
-        <ZoomComponent/>
-      </div>
-    )}
-  </>);
+  return (
+    <>
+      {isZoomed && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            zIndex: isZoomed ? 1 : -999,
+          }}
+        >
+          <ZoomComponent />
+        </div>
+      )}
+    </>
+  );
 }
