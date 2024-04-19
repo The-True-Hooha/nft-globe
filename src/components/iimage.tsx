@@ -1,28 +1,28 @@
-import { OrbitControls } from "three/examples/jsm/Addons.js";
+import { FontLoader, OrbitControls } from "three/examples/jsm/Addons.js";
 import createStarFieldArea from "@/lib/3d/star-field";
 import * as THREE from "three";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   CSS2DRenderer,
   CSS2DObject,
 } from "three/addons/renderers/CSS2DRenderer.js";
-import PadCard from "./pad-card";
+import PadCard from "@/components/pad-card";
 import { createRoot } from "react-dom/client";
 import fetchPadDataResult from "@/lib/fetch.data";
+import ZoomComponent from "@/components/zoom";
 
-export default function GlobeWithMakers() {
+export default function Home() {
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zControls, setZControls]: any = useState(null);
+  const controlsRef = useRef<OrbitControls | any>(null);
   useEffect(() => {
     const w = window.innerWidth;
     const h = window.innerHeight;
     const scene = new THREE.Scene();
-    // set the field of view to display how the object is seen from the camera perspective , higher value indicates a wider field of view
-    const camera = new THREE.PerspectiveCamera(120, w / h, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(70, w / h, 0.5, 1000);
     camera.position.set(0.5, 0.5, 1).setLength(14);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(innerWidth, innerHeight);
-    // set the color to be green or make the sky dark
-    // renderer.setClearColor(0xaaffaa);
-
     document.body.appendChild(renderer.domElement);
 
     const stars = createStarFieldArea({ numStars: 2000 });
@@ -33,11 +33,16 @@ export default function GlobeWithMakers() {
     labelRender.domElement.style.position = "absolute";
     labelRender.domElement.style.top = "0px";
     document.body.appendChild(labelRender.domElement);
+
     window.addEventListener("resize", onWindowResize);
     const controls = new OrbitControls(camera, labelRender.domElement);
+    controlsRef.current = controls;
+    controls.addEventListener("change", handleZoomChange);
+
     controls.enablePan = false;
     controls.minDistance = 6;
     controls.maxDistance = 15;
+    controls.enableZoom = true;
     controls.enableDamping = true;
     controls.autoRotate = true;
     controls.autoRotateSpeed *= 0.25;
@@ -78,8 +83,6 @@ export default function GlobeWithMakers() {
     }
 
     const detail = 12;
-
-    // earthGroup.add(earthMesh);
     const ambientLight = new THREE.AmbientLight(0xffffff, 4); // Add ambient light
     scene.add(ambientLight);
     const sunLight = new THREE.DirectionalLight(0xffffff);
@@ -114,7 +117,6 @@ export default function GlobeWithMakers() {
         gl_PointSize *= 0.4 + (dot(normalize(vMvPosition), vNormal) * 0.6); // size depends position in camera space
       `
         );
-        //console.log(shader.vertexShader);
         shader.fragmentShader = `
     	varying float vVisibility;
       varying vec3 vNormal;
@@ -132,7 +134,6 @@ export default function GlobeWithMakers() {
         vec4 diffuseColor = vec4( col, opacity );
       `
         );
-        //console.log(shader.fragmentShader);
       },
     });
     const material = new THREE.MeshBasicMaterial({
@@ -156,18 +157,17 @@ export default function GlobeWithMakers() {
     const earthMesh = new THREE.Mesh(sg, material);
     const earthGroup = new THREE.Group();
     earthGroup.add(earthMesh);
-    // earthGroup.rotation.z = (-23.4 * Math.PI) / 180;
-    // earthGroup.add(icshdrn);
     scene.add(earthGroup);
-
-    // <ICOSAHEDRON>
 
     globe.add(icshdrn);
     const markerCount = 100;
     const markerInfo: any = [];
     const gMarker = new THREE.PlaneGeometry();
     let mMarker = new THREE.MeshBasicMaterial({
-      color: 0xff3232,
+      color: 0x0000ff, // changed the marker color
+      side: THREE.DoubleSide, // add a new prop
+      transparent: true,
+      opacity: 0.8,
       //@ts-ignore comment
       onBeforeCompile: (shader: any) => {
         shader.uniforms.time = globalUniforms.time;
@@ -181,7 +181,6 @@ export default function GlobeWithMakers() {
       	vPhase = phase; // de-synch of ripples
       `
         );
-        //console.log(shader.vertexShader);
         shader.fragmentShader = `
     	uniform float time;
       varying float vPhase;
@@ -208,8 +207,8 @@ export default function GlobeWithMakers() {
     let markers = new THREE.InstancedMesh(gMarker, mMarker, markerCount);
 
     let dummy = new THREE.Object3D();
-    let phase = [];
-    // const getPadJson = fetchPadDataResult();
+    let phase: any[] = [];
+
     for (let i = 0; i < markerCount; i++) {
       const id = i + 1;
       dummy.position.randomDirection().setLength(rad + 0.1);
@@ -226,24 +225,29 @@ export default function GlobeWithMakers() {
           crd: dummy.position.clone(),
           padData: padData,
         };
+
+        const labelDiv = document.createElement("div");
+        labelDiv.textContent = markerInfo[i].padData.name;
+        labelDiv.classList.add("label");
+        labelDiv.style.color = "white";
+        labelDiv.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+        labelDiv.style.padding = "4px 8px";
+        labelDiv.style.borderRadius = "4px";
+        labelDiv.style.fontSize = "14px";
+        labelDiv.style.pointerEvents = "none";
       });
     }
     gMarker.setAttribute(
       "phase",
       new THREE.InstancedBufferAttribute(new Float32Array(phase), 1)
     );
-
     scene.add(markers);
-
     const clock = new THREE.Clock();
     renderer.setAnimationLoop(() => {
       let t = clock.getElapsedTime();
       globalUniforms.time.value = t;
-      // track the label visibility
-      // label.userData.trackVisibility()
       controls.update();
       renderer.render(scene, camera);
-      labelRender.render(scene, camera);
     });
 
     function onWindowResize() {
@@ -252,7 +256,6 @@ export default function GlobeWithMakers() {
       renderer.setSize(window.innerWidth, window.innerHeight);
     }
     window.addEventListener("resize", onWindowResize, false);
-
     const pointer = new THREE.Vector2();
     const raycaster = new THREE.Raycaster();
     let intersections: any[];
@@ -321,10 +324,40 @@ export default function GlobeWithMakers() {
     }
 
     return () => {
+      controls.removeEventListener("change", handleZoomChange);
       window.removeEventListener("resize", onWindowResize, false);
       document.body.removeChild(renderer.domElement);
     };
   }, []);
-  return null;
-}
 
+  const handleZoomChange = () => {
+    if (controlsRef.current) {
+      const distance = controlsRef.current.getDistance();
+      const zoomThreshold = 7;
+      if (distance <= zoomThreshold && !isZoomed) {
+        setIsZoomed(true);
+        controlsRef.current.autoRotate = false;
+      } else if (distance > zoomThreshold) {
+        setIsZoomed(false);
+        controlsRef.current.autoRotate = true;
+      }
+    }
+  };
+
+  return (
+    <>
+      {isZoomed && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            zIndex: isZoomed ? 1 : -999,
+          }}
+        >
+          <ZoomComponent />
+        </div>
+      )}
+    </>
+  );
+}
