@@ -36,17 +36,16 @@ export default function ImageThree() {
 
     window.addEventListener("resize", onWindowResize);
     const controls = new OrbitControls(camera, labelRender.domElement);
-    controlsRef.current = controls
-    controls.addEventListener('change', handleZoomChange)
+    controlsRef.current = controls;
+    controls.addEventListener("change", handleZoomChange);
 
     controls.enablePan = false;
     controls.minDistance = 6;
     controls.maxDistance = 15;
-    controls.enableZoom = true
+    controls.enableZoom = true;
     controls.enableDamping = true;
     controls.autoRotate = true;
     controls.autoRotateSpeed *= 0.25;
-
 
     let globalUniforms = {
       time: { value: 0 },
@@ -322,28 +321,26 @@ export default function ImageThree() {
     }
 
     return () => {
-      controls.removeEventListener('change', handleZoomChange)
+      controls.removeEventListener("change", handleZoomChange);
       window.removeEventListener("resize", onWindowResize, false);
       document.body.removeChild(renderer.domElement);
     };
-
-    
   }, []);
 
   const handleZoomChange = () => {
-   if (controlsRef.current) {
-     const distance = controlsRef.current.getDistance();
-     const zoomThreshold = 6;
-     if (distance <= zoomThreshold && !isZoomed) {
-       setIsZoomed(true);
-       controlsRef.current.autoRotate = false;
-     } else if (distance > zoomThreshold && isZoomed) {
-       setIsZoomed(false);
-       controlsRef.current.autoRotate = true;
-     }
-   }
+    if (controlsRef.current) {
+      const distance = controlsRef.current.getDistance();
+      const zoomThreshold = 7;
+      if (distance <= zoomThreshold && !isZoomed) {
+        setIsZoomed(true);
+        controlsRef.current.autoRotate = false;
+      } else if (distance > zoomThreshold) {
+        setIsZoomed(false);
+        controlsRef.current.autoRotate = true;
+      }
+    }
   };
-  
+
   return (
     <>
       {isZoomed && (
